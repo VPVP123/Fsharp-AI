@@ -1,11 +1,16 @@
 ﻿namespace FSAI
 
 module Minimax =
-    // let printHello message = 
-    //     $"Hello, world {message}"
 
     type Class1() = 
         member this.X = "F#"
+
+    let boardSize = int 8
+    let empty = byte  0
+    let white = byte  1
+    let black = byte  2
+    let valid = byte  3
+    let tie =  byte 4
 
     let Evaluation board:byte[,] = //Evaluation function take a board
 
@@ -35,13 +40,10 @@ module Minimax =
                 
                 eval2 //Return value from eval2
     
-    let GetScore board:byte[,] tile = 
-        let score = 0 //Set start value for score
-        for cell in board do  //Foreach cell in the board
-            if cell = tile then score++ //If cell is tile then add one to score
-        score // return the value of score
+    let GetScore (board : byte[,]) (tile : byte) = 
+        Seq.cast<byte> board  //Set start value for score
+        |> Seq.filter (fun cell -> cell = tile)  |> Seq.length //Foreach cell in the board
     
-
     let Action "state" = //Implement
     let getScore "player" = //Implement
     let getValidMoves "board & player" = //Implement
