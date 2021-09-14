@@ -65,6 +65,15 @@ module Minimax =
         if tile = black then white //check if player black then return player white
         elif tile = white then black //Opposit, check if player white then return player black
         else //error if not if npt value 1 or 2
+    
+    let countCorners (board : byte[,]) (tile : byte) =
+        let corners = 0
+        if board[0,0] = tile then corners //If top-left corner
+        if board[0,7] = tile then corners //If top-right corner
+        if board[7,0] = tile then corners //If down-left corner
+        if board[7,7] = tile then corners //If down-right corner
+        corners //Return corners
+
 
     let GetFlippedPieces //Implement
     let GetValidMoves //Implement
