@@ -12,15 +12,22 @@ module Minimax =
     let valid = byte  3
     let tie =  byte 4
 
+    let dirs =[
+        (-1,1); (0,1); (1,1);
+        (-1,1);         (1,0);
+        (-1,-1); (0,-1);(1,-1);
+        ]
+
     //Function check if it inside the board 8x8
-    //let IsOnBoard x y = 
-    //    0 <= x && x <= 7 && 0 <= y && y <= 7 //See if its inside board of 8x8 tiles
-
-    let MinimaxAlphaBeta (board : byte[,]) (depth : int) (a : int) (b : int) (tile : byte) (isMaxPlayer : bool) =
-        0 //Placeholder
+    let IsOnBoard x y = 
+        0 <= x && x <= 7 && 0 <= y && y <= 7 //See if its inside board of 8x8 tiles
 
 
-    let otherTile tile = 
+    let GetFlippedPieces (board : byte[,]) (move : (int * int)) (tile : byte) = 
+        let randomList = [(1, 2); (2, 3); (4, 4)] //placeholder
+        randomList //placeholder
+
+    let OtherTile tile = 
         if tile = black then white //check if player black then return player white
         elif tile = white then black //Opposit, check if player white then return player black
         else byte -1//error if not if npt value 1 or 2
@@ -67,9 +74,15 @@ module Minimax =
                let eval2 = eval1 + ((CountCorners board black) - (CountCorners board white)) * 100 //take value2 from eval and multiple by 100
                eval2 //Return value from eval2
    
+    let MakeMove (board : byte[,]) (move : (int * int)) (tile : byte) =
+        let flippedPieces = GetFlippedPieces board move tile //Runs the getflippedpieces function
+        for flippedPiece in flippedPieces do //for every flipped piece
+            board.[fst flippedPiece, snd flippedPiece] <- tile //change the existing tile on the board the the new tile
+        if not(flippedPieces.IsEmpty) then //If any flipped piece was missed
+            board.[fst move, snd move] <- tile //Change the tile
+        
 
-
-    let getWinner (board : byte[,]) = 
+    let GetWinner (board : byte[,]) = 
        let whiteScore = GetScore board white //Get score for white
        let blackScore = GetScore board black //Get score for black
        if whiteScore = 0 || blackScore = 0 || whiteScore + blackScore = 64 || 
@@ -79,5 +92,16 @@ module Minimax =
            else tie //If whiteScore is equal blackScore then return tie 
        else byte -1// Error? or empty
    
-   
-       
+    let MinimaxAlphaBeta (board : byte[,]) (depth : int) (a : int) (b : int) (tile : byte) (isMaxPlayer : bool) =
+        if depth = 0 || not(GetWinner board = (byte -1)) then Evaluation board
+        else
+            let bestScore = 0 //|||||Work in progresss below|||||||
+            //if isMaxPlayer then
+            //let validMoves = GetValidMoves board tile
+            //if validMoves.Length > 0 then
+            //    for move in validMoves do
+            //        let childBoard = board.Clone()
+            //        MakeMove childBoard move tile
+
+
+
