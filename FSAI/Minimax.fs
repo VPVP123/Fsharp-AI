@@ -17,7 +17,7 @@ module Minimax =
     //    0 <= x && x <= 7 && 0 <= y && y <= 7 //See if its inside board of 8x8 tiles
 
     let MinimaxAlphaBeta (board : byte[,]) (depth : int) (a : int) (b : int) (tile : byte) (isMaxPlayer : bool) =
-        0
+        0 //Placeholder
 
 
     let otherTile tile = 
@@ -30,15 +30,15 @@ module Minimax =
         |> Seq.filter (fun cell -> cell = tile)  |> Seq.length //Filter each cell in the board
 
     let GetValidMoves (board : byte[,]) (tile : byte) = 
-        let randomList = [(1, 2); (2, 3); (4, 4)]
-        randomList
+        let randomList = [(1, 2); (2, 3); (4, 4)] //placeholder
+        randomList //placeholder
 
     let CountCorners (board : byte[,]) (tile : byte) =
-        let validCorners = [(board.[0,0]);(board.[0,7]);(board.[7,0]);(board.[7,7])]
-        let mutable myCorners = []
-        for corner in validCorners do
-            if corner = tile then myCorners <- [corner] |> List.append myCorners
-        myCorners.Length
+        let validCorners = [(board.[0,0]);(board.[0,7]);(board.[7,0]);(board.[7,7])] //Create a list of valid corners
+        let mutable myCorners = [] //Create an empty list where we are going to append all the corners we are holding
+        for corner in validCorners do // go over all corners in the first list we created
+            if corner = tile then myCorners <- [corner] |> List.append myCorners //Check if the corner in the loop is occupied by our tile and if it is add it to myCorners list
+        myCorners.Length //Return  the length of the myCorners list to get all the inhabited corners of the tile type we are checking
 
     let Evaluation (board : byte[,]) = //Evaluation function take a board
 
