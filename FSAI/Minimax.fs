@@ -36,9 +36,14 @@ module Minimax =
         Seq.cast<byte> board  //Set start value
         |> Seq.filter (fun cell -> cell = tile)  |> Seq.length //Filter each cell in the board
 
-    let GetValidMoves (board : byte[,]) (tile : byte) = 
+    let GetValidMoves (board : byte[,]) (tile : byte) = //KALLA PÅ DENNA IFRÅN GAME:CS//
         let randomList = [(1, 2); (2, 3); (4, 4)] //placeholder
         randomList //placeholder
+       //or x in 0..7 do
+       //  for y in 0..7 
+       //       if board.[x,y] = empty then 
+        //          let doneMove = 0
+                    
 
     let CountCorners (board : byte[,]) (tile : byte) =
         let validCorners = [(board.[0,0]);(board.[0,7]);(board.[7,0]);(board.[7,7])] //Create a list of valid corners
@@ -51,8 +56,8 @@ module Minimax =
 
         let blackScore = GetScore board black //Get score for player black
         let whiteScore = GetScore board white //Get score for player white
-        let blackMobility = GetValidMoves board black //Get player blacks valid moves in the game
-        let whiteMobility = GetValidMoves board white //Get player blacks valid moves in the game
+        let blackMobility = GetValidMoves board black //Get player blacks valid moves in the game //KALLA PÅ DENNA IFRÅN GAME:CS//
+        let whiteMobility = GetValidMoves board white //Get player blacks valid moves in the game //KALLA PÅ DENNA IFRÅN GAME:CS//
 
         if blackScore = 0 then -200000 //if black score = 0 then return -200000
         elif whiteScore = 0 then 200000 //if whites score = 0 then return 200000
@@ -94,14 +99,29 @@ module Minimax =
    
     let MinimaxAlphaBeta (board : byte[,]) (depth : int) (a : int) (b : int) (tile : byte) (isMaxPlayer : bool) =
         if depth = 0 || not(GetWinner board = (byte -1)) then Evaluation board
-        else
-            let bestScore = 0 //|||||Work in progresss below|||||||
-            //if isMaxPlayer then
-            //let validMoves = GetValidMoves board tile
-            //if validMoves.Length > 0 then
-            //    for move in validMoves do
-            //        let childBoard = board.Clone()
-            //        MakeMove childBoard move tile
+        
+        let bestScore = 0 
+        if isMaxPlayer then bestScore = System.Int32.MinValue  //If isMaxPlayer then set bestCore to MinValue
+        else bestScore = System.Int32.MaxValue //If not isMaxPlayer then set bestCore to maxValue
+
+        let validMoves = GetValidMoves board tile
+        if validMoves.Length > 0 then //Check if validMoves is greater then 0
+            for move in validMoves do //For every move in validMoves then do
+                let childBoard = board.Clone() //Get board and set as a childboard
+                MakeMove childBoard move tile //Add childboard, move and tile to makeMove function
+                let nodeScore = MinimaxAlphaBeta childBoard (depth - 1) a b  (otherTile tile) (not isMaxPlayer)
+                if isMaxPlayer then //Check if its max player
+                    bestScore = max bestScore nodeScore //Max value of bestScore and nodeScore = bestScore
+                    a = max bestScore a// max of bestScore and a = a
+                else 
+                    bestScore = min bestScore nodeScore //Min value of bestScore and nodeScore = bestScore
+                    b = min bestScore b // min value of bestScore and b = b
+                if b <= a then -1 //Add break here ? //If a is equal or greater then b, then return error/break
+
+        else MinimaxAlphaBeta board depth a b (OtherTile tile) (not isMaxPlayer) //If validMoves is not greater then 0 then return minimaxalphabeta function
+        bestScore //Then return bestScore
+
+
 
 
 
