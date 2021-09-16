@@ -61,7 +61,7 @@ module Minimax =
 
         if blackScore = 0 then -200000 //if black score = 0 then return -200000
         elif whiteScore = 0 then 200000 //if whites score = 0 then return 200000
-        else //If none of bellow then nothing
+     // else //If none of bellow then nothing
 
         if blackScore + whiteScore = 64 || blackMobility.Length + whiteMobility.Length = 0 then
             if blackScore < whiteScore then
@@ -98,7 +98,8 @@ module Minimax =
        else byte -1// Error? or empty
    
     let MinimaxAlphaBeta (board : byte[,]) (depth : int) (a : int) (b : int) (tile : byte) (isMaxPlayer : bool) =
-        if depth = 0 || not(GetWinner board = (byte -1)) then Evaluation board
+        if depth = 0 || GetWinner board <> empty then // Check if depth = 0 or if GetWinner is empty
+            Evaluation board //If so then return Evaluation board
         
         let bestScore = 0 
         if isMaxPlayer then bestScore = System.Int32.MinValue  //If isMaxPlayer then set bestCore to MinValue
