@@ -254,7 +254,10 @@ namespace Reversi
 
         public static int runMiniMax(byte[,] board, int depth, int a, int b, byte tile, bool isMaxPlayer)
         {
-            var wrappedGetValidMoveFunc = FuncConvert.ToFSharpFunc<Tuple<byte[,], byte>, Microsoft.FSharp.Collections.FSharpList<Tuple<int, int>>>(t => ListModule.OfSeq(GetValidMoves(t.Item1, t.Item2)));
+            //Wrappa argumenten till funktionen GetValidMove: byte[,] och byte.
+            //F# har inte C#'s generic List så vi behöver ändra return värdet till en FSharp List
+            //och sedan converta svaret från GetValidMove med hjälp av ListModule.ofSeq
+            var wrappedGetValidMoveFunc = FuncConvert.ToFSharpFunc<Tuple<byte[,], byte>, Microsoft.FSharp.Collections.FSharpList<Tuple<int, int>>>(t => ListModule.OfSeq(GetValidMoves(t.Item1, t.Item2))); 
             var AddGetValidMoveFunc = FuncConvert.FuncFromTupled(wrappedGetValidMoveFunc); // Skapa en FSharpFunc från den tuplade representationen
             return FSAI.Minimax.MinimaxAlphaBeta(AddGetValidMoveFunc, board, depth, a, b, tile, isMaxPlayer); // Anropa F#-koden, skicka med vår wrappade funktion
         }
