@@ -21,11 +21,6 @@ module Minimax =
     let IsOnBoard x y = 
         0 <= x && x <= 7 && 0 <= y && y <= 7 //See if its inside board of 8x8 tiles
 
-
-    let GetFlippedPieces (board : byte[,]) (move : (int * int)) (tile : byte) = 
-        let randomList = [(1, 2); (2, 3); (4, 4)] //placeholder
-        randomList //placeholder
-
     //Function OtherTile check tail color and return opposit
     let OtherTile tile = 
         if tile = black then white //check if player black then return player white
@@ -74,8 +69,8 @@ module Minimax =
                let eval2 = eval1 + ((CountCorners board black) - (CountCorners board white)) * 100 //take value2 from eval and multiple by 100
                eval2 //Return value from eval2
    
-    let MakeMove (board : byte[,]) (move : (int * int)) (tile : byte) =
-        let flippedPieces = GetFlippedPieces board move tile //Runs the getflippedpieces function
+    let MakeMove (getFlippedPFunc) (board : byte[,]) (move : (int * int)) (tile : byte) =
+        let flippedPieces:(int*int)list = getFlippedPFunc board move tile //Runs the getflippedpieces function
         for flippedPiece in flippedPieces do //for every flipped piece
             board.[fst flippedPiece, snd flippedPiece] <- tile //change the existing tile on the board the the new tile
         if not(flippedPieces.IsEmpty) then //If any flipped piece was missed
@@ -96,30 +91,30 @@ module Minimax =
 
     
    //MinimaxAlphaBeta recursive function
-    let rec MinimaxAlphaBeta (validMoveFunc) (board : byte[,]) (depth : int) (a : int) (b : int) (tile : byte) (isMaxPlayer : bool) =
-        let rec RecMoveLoop (board : byte[,]) (validMoves : (int*int)list) (bestScore : int) (tile : byte) (isMaxPlayer : bool) (a : int) (b : int) =
+    let rec MinimaxAlphaBeta (getFlippedPFunc) (validMoveFunc) (board : byte[,]) (depth : int) (a : int) (b : int) (tile : byte) (isMaxPlayer : bool) =
+        let rec RecMoveLoop (getFlippedPFunc) (board : byte[,]) (validMoves : (int*int)list) (bestScore : int) (tile : byte) (isMaxPlayer : bool) (a : int) (b : int) =
             match validMoves with //Matches validMoves
                 | [] -> bestScore //If empty then return bestScore
                 | head::tail -> //Check from start to end
-                    let childBoard = MakeMove board head tile //Add childBaord which calls for MakeMNove function
-                    let nodeScore = MinimaxAlphaBeta validMoveFunc childBoard (depth - 1) a b (OtherTile tile) (not isMaxPlayer) //nodeScore is MinimaxAlphaBeta
+                    let childBoard = MakeMove getFlippedPFunc board head tile //Add childBaord which calls for MakeMNove function
+                    let nodeScore = MinimaxAlphaBeta getFlippedPFunc validMoveFunc childBoard (depth - 1) a b (OtherTile tile) (not isMaxPlayer) //nodeScore is MinimaxAlphaBeta
                     if isMaxPlayer then //Check if its max player
                         let newBestScore = max bestScore nodeScore //Max value of bestScore and nodeScore added to newBestScore
                         let newA = max bestScore a// max of bestScore and a added to newA
                         if b <= newA then //Check if newA is equal or greater then b
                             newBestScore // if so then return newBestScore
                         else //Else if b is greater or equal then newA
-                            RecMoveLoop board tail newBestScore tile isMaxPlayer newA b //Then return RecMoveLoop
+                            RecMoveLoop getFlippedPFunc board tail newBestScore tile isMaxPlayer newA b //Then return RecMoveLoop
                     else
                         let newBestScore = min bestScore nodeScore //Max value of bestScore and nodeScore is added to newBestScore
                         let newB = min bestScore b // max of bestScore and a is added to newB
                         if newB <= a then //Check if a is equal or greater then newB
                             newBestScore // if so then return newBestScore
                         else //Else if newB is greater or equal then a
-                            RecMoveLoop board tail newBestScore tile isMaxPlayer a newB //Then return RecMoveLoop
+                            RecMoveLoop getFlippedPFunc board tail newBestScore tile isMaxPlayer a newB //Then return RecMoveLoop
 
 
-        if depth = 0 || GetWinner validMoveFunc board <> empty then // Check if depth = 0 or if GetWinner is empty
+        if depth = 0 || GetWinner validMoveFunc board <> byte -1 then // Check if depth = 0 or if GetWinner is empty
             Evaluation validMoveFunc board //If so then return Evaluation board
         else //Else if depth != 0 or GetWinner != empty
             let bestScore = match isMaxPlayer with // Set bestScore and check with match if isMaxPlayer is true or false
@@ -128,9 +123,9 @@ module Minimax =
             let validMoves:(int * int)list= validMoveFunc board tile // Get function validMoves from game.cs (C#)
 
             if validMoves.IsEmpty then //Check if validMoves = empty 
-                MinimaxAlphaBeta validMoveFunc board depth a b (OtherTile tile) (not isMaxPlayer) //If empty then MinimaxAlphaBeta
+                MinimaxAlphaBeta getFlippedPFunc validMoveFunc board depth a b (OtherTile tile) (not isMaxPlayer) //If empty then MinimaxAlphaBeta
             else //Else if validMoves != empty 
-                RecMoveLoop board validMoves bestScore tile isMaxPlayer a b // If not empty then RecMoveLoop
+                RecMoveLoop getFlippedPFunc board validMoves bestScore tile isMaxPlayer a b // If not empty then RecMoveLoop
 
                    
 

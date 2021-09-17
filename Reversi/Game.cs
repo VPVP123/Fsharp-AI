@@ -259,7 +259,10 @@ namespace Reversi
             //och sedan converta svaret från GetValidMove med hjälp av ListModule.ofSeq
             var wrappedGetValidMoveFunc = FuncConvert.ToFSharpFunc<Tuple<byte[,], byte>, Microsoft.FSharp.Collections.FSharpList<Tuple<int, int>>>(t => ListModule.OfSeq(GetValidMoves(t.Item1, t.Item2))); 
             var AddGetValidMoveFunc = FuncConvert.FuncFromTupled(wrappedGetValidMoveFunc); // Skapa en FSharpFunc från den tuplade representationen
-            return FSAI.Minimax.MinimaxAlphaBeta(AddGetValidMoveFunc, board, depth, a, b, tile, isMaxPlayer); // Anropa F#-koden, skicka med vår wrappade funktion
+            //Samma som ovan bara med GetFlippedPeices
+            var wrappedGetFlippedFunc = FuncConvert.ToFSharpFunc<Tuple<byte[,], Tuple<int, int>, byte>, Microsoft.FSharp.Collections.FSharpList<Tuple<int, int>>>(t => ListModule.OfSeq(GetFlippedPieces(t.Item1, t.Item2, t.Item3)));
+            var AddGetFlippedeFunc = FuncConvert.FuncFromTupled(wrappedGetFlippedFunc); // Skapa en FSharpFunc från den tuplade representationen
+            return FSAI.Minimax.MinimaxAlphaBeta(AddGetFlippedeFunc, AddGetValidMoveFunc, board, depth, a, b, tile, isMaxPlayer); // Anropa F#-koden, skicka med vår wrappade funktion
         }
 
         public static void MakeMove(byte[,] board, Tuple<int, int> move, byte tile)
